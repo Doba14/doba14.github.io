@@ -1,0 +1,39 @@
+
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Cours Numériques</title>
+  <link href="cours_numeriques_selection.css" rel="stylesheet"/>
+</head>
+<body>
+  <h1>Cours Numériques</h1>
+  <div class="container">
+    <label for="classe">Classe :</label>
+    <select id="classe" onchange="updateMatieres()">
+      <option value="">-- Choisir la classe --</option>
+      <option value="Première A">Première A</option>
+      <option value="Première C">Première C</option>
+      <option value="Première D">Première D</option>
+    </select>
+
+    <label for="matiere">Matière :</label>
+    <select id="matiere" onchange="updateLecons()">
+      <option value="">-- Choisir la matière --</option>
+    </select>
+
+    <label for="lecon">Leçon :</label>
+    <select id="lecon" onchange="showCourse()">
+      <option value="">-- Choisir la leçon --</option>
+    </select>
+
+    <div class="course-info" id="courseInfo" style="display:none;">
+      <p id="description"></p>
+      <a id="pdfLink" href="#" target="_blank">Télécharger le cours PDF</a><br/>
+      <a id="videoLink" href="#" target="_blank">Regarder la vidéo</a>
+    </div>
+  </div>
+  <script src="cours_numeriques_selection.js"></script>
+</body>
+</html>

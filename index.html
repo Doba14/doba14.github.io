@@ -1,0 +1,474 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>✨ 𝓚𝓪𝓽𝓬𝓱𝓪𝓷𝔀𝓪 ✨</title>
+<link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Pacifico&family=Permanent+Marker&display=swap" rel="stylesheet"/>
+<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+<link href="Untitled-1.css" rel="stylesheet"/>
+</head>
+<body class="text-white warm-bg">
+   <!-- Skip to content link for accessibility -->
+   <a href="#main-content" class="skip-link">Passer au contenu principal</a>
+    
+   <div class="container mx-auto px-4 py-8 max-w-4xl">
+       <!-- En-tête -->
+       <header class="flex justify-between items-center mb-8">
+           <h1 class="game-title">𝓚𝓪𝓽𝓬𝓱𝓪𝓷𝔀𝓪</h1>
+           <div class="flex space-x-4">
+               <button id="toggleMusic" class="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-lg" aria-label="Activer/désactiver la musique">
+                   <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                       <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clip-rule="evenodd" />
+                   </svg>
+               </button>
+               <button id="openSettings" class="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-lg" aria-label="Ouvrir les paramètres">
+                   <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                       <path fill-rule="evenodd" d="M11.49 3.17c-.38-1.56-2.6-1.56-2.98 0a1.532 1.532 0 01-2.286.948c-1.372-.836-2.942.734-2.106 2.106.54.886.061 2.042-.947 2.287-1.561.379-1.561 2.6 0 2.978a1.532 1.532 0 01.947 2.287c-.836 1.372.734 2.942 2.106 2.106a1.532 1.532 0 012.287.947c.379 1.561 2.6 1.561 2.978 0a1.533 1.533 0 012.287-.947c1.372.836 2.942-.734 2.106-2.106a1.533 1.533 0 01.947-2.287c1.561-.379 1.561-2.6 0-2.978a1.532 1.532 0 01-.947-2.287c.836-1.372-.734-2.942-2.106-2.106a1.532 1.532 0 01-2.287-.947zM10 13a3 3 0 100-6 3 3 0 000 6z" clip-rule="evenodd" />
+                   </svg>
+               </button>
+           </div>
+       </header>
+
+       <!-- Statistiques (visible sur toutes les vues sauf inscription) -->
+       <div id="stats-bar" class="bg-white bg-opacity-20 backdrop-filter backdrop-blur-lg rounded-xl p-4 mb-8 flex justify-between items-center hidden" aria-label="Statistiques du joueur">
+           <div class="flex items-center">
+               <div class="bg-yellow-500 rounded-full h-10 w-10 flex items-center justify-center mr-3">
+                   <span id="level-display" class="font-bold" aria-label="Niveau">1</span>
+               </div>
+               <div>
+                   <p class="text-sm opacity-80">Niveau</p>
+                   <p class="font-bold">Débutant</p>
+               </div>
+           </div>
+           <div class="flex items-center">
+               <div class="bg-green-500 rounded-full h-10 w-10 flex items-center justify-center mr-3">
+                   <span id="streak-display" class="font-bold" aria-label="Série de bonnes réponses">0</span>
+               </div>
+               <div>
+                   <p class="text-sm opacity-80">Série</p>
+                   <p class="font-bold">Victoires</p>
+               </div>
+           </div>
+           <div class="flex items-center">
+               <div class="bg-blue-500 rounded-full h-10 w-10 flex items-center justify-center mr-3">
+                   <span id="xp-display" class="font-bold" aria-label="Points d'expérience">0</span>
+               </div>
+               <div>
+                   <p class="text-sm opacity-80">XP</p>
+                   <p class="font-bold">Points</p>
+               </div>
+           </div>
+       </div>
+
+       <!-- Contenu principal -->
+       <main id="main-content">
+           <!-- Formulaire d'inscription -->
+           <div id="inscription-view" class="view active bg-white text-gray-800 rounded-xl p-6 shadow-lg warm-card" role="region" aria-label="Inscription">
+               <h2 class="text-2xl font-bold mb-6 text-center">Fotamanan dans <span class="game-title text-2xl">𝓚𝓪𝓽𝓬𝓱𝓪𝓷𝔀𝓪</span></h2>
+               <p class="mb-4 text-center">vous savez, avant de commencer toutes chose, on s'identifie🤩🤩.</p>
+               
+               <form id="profile-form" class="space-y-4">
+                   <div>
+                       <label for="nom" class="block text-sm font-medium text-gray-700">Nom <span class="text-red-500">*</span></label>
+                       <input type="text" id="nom" name="nom" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500" aria-required="true">
+                       <p id="nom-error" class="text-red-500 text-sm hidden" role="alert">Ce champ est obligatoire</p>
+                   </div>
+                   
+                   <div>
+                       <label for="prenom" class="block text-sm font-medium text-gray-700">Prénom <span class="text-red-500">*</span></label>
+                       <input type="text" id="prenom" name="prenom" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500" aria-required="true">
+                       <p id="prenom-error" class="text-red-500 text-sm hidden" role="alert">Ce champ est obligatoire</p>
+                   </div>
+                   
+                   <div>
+                       <label for="age" class="block text-sm font-medium text-gray-700">Âge <span class="text-red-500">*</span></label>
+                       <input type="number" id="age" name="age" min="10" max="99" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500" aria-required="true">
+                       <p id="age-error" class="text-red-500 text-sm hidden" role="alert">Ce champ est obligatoire</p>
+                   </div>
+                   
+                   <div>
+                       <label for="classe" class="block text-sm font-medium text-gray-700">Classe <span class="text-red-500">*</span></label>
+                       <select id="classe" name="classe" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500" aria-required="true">
+                           <option value="Première C">Première C</option>
+                           <option value="Première D">Première D</option>
+                           <option value="Première A">Première A</option>
+                       </select>
+                   </div>
+                   
+                   <div>
+                       <fieldset>
+                           <legend class="block text-sm font-medium text-gray-700">Matières préférées <span class="text-red-500">*</span></legend>
+                           <div class="checkbox-container" role="group" aria-labelledby="matieres-group">
+                               <label class="checkbox-item">
+                                   <input type="checkbox" id="math" name="matieres" value="Mathématiques">
+                                   <span>Mathématiques</span>
+                               </label>
+                               <label class="checkbox-item">
+                                   <input type="checkbox" id="physique" name="matieres" value="Physique-Chimie">
+                                   <span>Physique-Chimie</span>
+                               </label>
+                               <label class="checkbox-item">
+                                   <input type="checkbox" id="svt" name="matieres" value="SVT">
+                                   <span>SVT</span>
+                               </label>
+                               <label class="checkbox-item">
+                                   <input type="checkbox" id="francais" name="matieres" value="Français">
+                                   <span>Français</span>
+                               </label>
+                               <label class="checkbox-item">
+                                   <input type="checkbox" id="histoire" name="matieres" value="Histoire-Géographie">
+                                   <span>Histoire-Géographie</span>
+                               </label>
+                               <label class="checkbox-item">
+                                   <input type="checkbox" id="philo" name="matieres" value="Philosophie">
+                                   <span>Philosophie</span>
+                               </label>
+                           </div>
+                       </fieldset>
+                       <p id="matieres-error" class="text-red-500 text-sm hidden" role="alert">Veuillez sélectionner au moins une matière</p>
+                   </div>
+                   
+                   <div class="flex justify-center">
+                       <button type="submit" class="warm-button font-bold py-2 px-6 rounded-lg shadow-md transition duration-300 ease-in-out transform hover:scale-105" aria-label="Commencer l'aventure">
+                           Commencer l'aventure
+                       </button>
+                   </div>
+               </form>
+           </div>
+
+           <!-- Menu principal -->
+           <div id="menu-view" class="view bg-white text-gray-800 rounded-xl p-6 shadow-lg warm-card" role="region" aria-label="Menu principal">
+               <div class="flex items-center mb-6">
+                   <img id="menu-character-img" src="images.jpg" alt="Personnage" class="character-image mr-4">
+                   <div class="character-dialog flex-1" aria-live="polite">
+                       <p id="menu-character-dialog">Fotamanan dans <span class="game-title text-xl">𝓚𝓪𝓽𝓬𝓱𝓪𝓷𝔀𝓪</span>! Je serai votre guide. Prêt à développer vos connaissances?</p>
+                   </div>
+               </div>
+               
+               <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                   <button id="start-game-btn" class="menu-btn bg-purple-600 hover:bg-purple-700 text-white font-bold py-4 px-6 rounded-lg shadow-md transition duration-300 ease-in-out flex items-center justify-center" aria-label="Commencer à jouer">
+                       <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+                           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+                       </svg>
+                       Commencer à jouer
+                   </button>
+                   <button id="stats-btn" class="menu-btn bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 px-6 rounded-lg shadow-md transition duration-300 ease-in-out flex items-center justify-center" aria-label="Voir mes statistiques">
+                       <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+                           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                       </svg>
+                       Voir mes statistiques
+                   </button>
+                   <button id="settings-btn" class="menu-btn bg-green-600 hover:bg-green-700 text-white font-bold py-4 px-6 rounded-lg shadow-md transition duration-300 ease-in-out flex items-center justify-center" aria-label="Paramètres">
+                       <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+                           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4" />
+                       </svg>
+                       Paramètres
+                   </button>
+                   <button id="about-btn" class="menu-btn bg-yellow-600 hover:bg-yellow-700 text-white font-bold py-4 px-6 rounded-lg shadow-md transition duration-300 ease-in-out flex items-center justify-center" aria-label="À propos">
+                       <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+                           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                       </svg>
+                       <a href="COURS.html">cours numeriques</a>
+                   </button>
+                   
+               </div>
+           </div>
+
+           <!-- Sélection de classe -->
+           <div id="classes-view" class="view bg-white text-gray-800 rounded-xl p-6 shadow-lg warm-card" role="region" aria-label="Sélection de classe">
+               <div class="flex justify-between items-center mb-6">
+                   <button class="back-btn bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold py-2 px-4 rounded-lg shadow-md transition duration-300 ease-in-out" aria-label="Retour">
+                       <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                           <path fill-rule="evenodd" d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z" clip-rule="evenodd" />
+                       </svg>
+                   </button>
+                   <h2 class="text-2xl font-bold">Choisissez votre classe</h2>
+                   <div class="w-10"></div> <!-- Spacer pour équilibrer -->
+               </div>
+               
+               <div class="flex items-center mb-6">
+                   <img id="classes-character-img" src="images.jpg" alt="Personnage" class="character-image mr-4">
+                   <div class="character-dialog flex-1" aria-live="polite">
+                       <p id="classes-character-dialog">Choisissez votre classe pour commencer à apprendre!</p>
+                   </div>
+               </div>
+               
+               <div class="grid grid-cols-1 gap-4" role="list">
+                   <button class="class-btn bg-blue-100 hover:bg-blue-200 text-blue-800 font-bold py-6 px-6 rounded-lg shadow-md transition duration-300 ease-in-out text-left" data-class="Première C" aria-label="Première C - Sciences et Mathématiques">
+                       <h3 class="text-xl font-bold mb-2">Première C</h3>
+                       <p class="text-blue-600">Sciences et Mathématiques</p>
+                   </button>
+                   <button class="class-btn bg-green-100 hover:bg-green-200 text-green-800 font-bold py-6 px-6 rounded-lg shadow-md transition duration-300 ease-in-out text-left" data-class="Première D" aria-label="Première D - Sciences de la Vie">
+                       <h3 class="text-xl font-bold mb-2">Première D</h3>
+                       <p class="text-green-600">Sciences de la Vie</p>
+                   </button>
+                   <button class="class-btn bg-yellow-100 hover:bg-yellow-200 text-yellow-800 font-bold py-6 px-6 rounded-lg shadow-md transition duration-300 ease-in-out text-left" data-class="Première A" aria-label="Première A - Littérature et Langues">
+                       <h3 class="text-xl font-bold mb-2">Première A</h3>
+                       <p class="text-yellow-600">Littérature et Langues</p>
+                   </button>
+               </div>
+           </div>
+
+           <!-- Sélection de matière -->
+           <div id="subjects-view" class="view bg-white text-gray-800 rounded-xl p-6 shadow-lg warm-card" role="region" aria-label="Sélection de matière">
+               <div class="flex justify-between items-center mb-6">
+                   <button class="back-btn bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold py-2 px-4 rounded-lg shadow-md transition duration-300 ease-in-out" aria-label="Retour">
+                       <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                           <path fill-rule="evenodd" d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z" clip-rule="evenodd" />
+                       </svg>
+                   </button>
+                   <h2 id="subjects-title" class="text-2xl font-bold">Choisissez une matière</h2>
+                   <div class="w-10"></div> <!-- Spacer pour équilibrer -->
+               </div>
+               
+               <div class="flex items-center mb-6">
+                   <img id="subjects-character-img" src="https://img.freepik.com/free-vector/hand-drawn-flat-design-african-american-teacher_23-2149380401.jpg" alt="Personnage" class="character-image mr-4">
+                   <div class="character-dialog flex-1" aria-live="polite">
+                       <p id="subjects-character-dialog">Quelle matière souhaitez-vous étudier aujourd'hui?</p>
+                   </div>
+               </div>
+               
+               <div id="subjects-container" class="grid grid-cols-1 md:grid-cols-2 gap-4" role="list" aria-label="Liste des matières disponibles">
+                   <!-- Les matières seront générées dynamiquement ici -->
+               </div>
+           </div>
+
+           <!-- Sélection de leçon -->
+           <div id="lessons-view" class="view bg-white text-gray-800 rounded-xl p-6 shadow-lg warm-card" role="region" aria-label="Sélection de leçon">
+               <div class="flex justify-between items-center mb-6">
+                   <button class="back-btn bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold py-2 px-4 rounded-lg shadow-md transition duration-300 ease-in-out" aria-label="Retour">
+                       <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                           <path fill-rule="evenodd" d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z" clip-rule="evenodd" />
+                       </svg>
+                   </button>
+                   <h2 id="lessons-title" class="text-2xl font-bold">Choisissez une leçon</h2>
+                   <div class="w-10"></div> <!-- Spacer pour équilibrer -->
+               </div>
+               
+               <div class="flex items-center mb-6">
+                   <img id="lessons-character-img" src="https://img.freepik.com/free-vector/hand-drawn-flat-design-african-american-teacher_23-2149380401.jpg" alt="Personnage" class="character-image mr-4">
+                   <div class="character-dialog flex-1" aria-live="polite">
+                       <p id="lessons-character-dialog">Quelle leçon voulez-vous étudier?</p>
+                   </div>
+               </div>
+               
+               <div id="lessons-container" class="grid grid-cols-1 gap-4" role="list" aria-label="Liste des leçons disponibles">
+                   <!-- Les leçons seront générées dynamiquement ici -->
+               </div>
+           </div>
+
+           <!-- Vue de jeu -->
+           <div id="game-view" class="view bg-white text-gray-800 rounded-xl p-6 shadow-lg warm-card" role="region" aria-label="Quiz en cours">
+               <div class="flex justify-between items-center mb-4">
+                   <button class="back-btn bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold py-2 px-4 rounded-lg shadow-md transition duration-300 ease-in-out" aria-label="Retour">
+                       <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                           <path fill-rule="evenodd" d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z" clip-rule="evenodd" />
+                       </svg>
+                   </button>
+                   <h2 id="game-title" class="text-xl font-bold">Leçon en cours</h2>
+                   <div class="w-10"></div> <!-- Spacer pour équilibrer -->
+               </div>
+               
+               <div class="progress-bar mb-4" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-label="Progression de la leçon">
+                   <div id="progress-fill" class="progress-fill" style="width: 0%;"></div>
+               </div>
+               
+               <div class="flex items-center mb-6">
+                   <img id="game-character-img" src="https://img.freepik.com/free-vector/hand-drawn-flat-design-african-american-teacher_23-2149380401.jpg" alt="Personnage" class="character-image mr-4">
+                   <div class="character-dialog flex-1" aria-live="polite">
+                       <p id="game-character-dialog">Commençons cette leçon!</p>
+                   </div>
+               </div>
+               
+               <div class="bg-gray-100 p-4 rounded-lg mb-6" role="region" aria-label="Question actuelle">
+                   <h3 id="question-counter" class="text-lg font-bold mb-2">Question 1/10:</h3>
+                   <p id="question-text" class="text-gray-800 text-lg">Chargement de la question...</p>
+               </div>
+               
+               <div id="answers-container" class="grid grid-cols-1 gap-3 mb-6" role="radiogroup" aria-labelledby="question-text">
+                   <!-- Les réponses seront générées dynamiquement ici -->
+               </div>
+               
+               <!-- Conteneur de feedback pour les réponses -->
+               <div id="feedback-container" class="hidden mb-6">
+                   <div class="flex items-center">
+                       <img id="feedback-character" src="/placeholder.svg" alt="Personnage de feedback" class="feedback-character">
+                       <div id="feedback-text" class="ml-4"></div>
+                   </div>
+               </div>
+               
+               <div id="explanation-container" class="bg-green-100 p-4 rounded-lg mb-6 hidden" role="region" aria-label="Explication">
+                   <h3 class="text-lg font-bold text-green-800 mb-2">Explication:</h3>
+                   <p id="explanation-text" class="text-green-800"></p>
+               </div>
+               
+               <div class="flex justify-center">
+                   <button id="next-question-btn" class="bg-purple-600 hover:bg-purple-700 text-white font-bold py-3 px-8 rounded-lg  class="bg-purple-600 hover:bg-purple-700 text-white font-bold py-3 px-8 rounded-lg shadow-md transition duration-300 ease-in-out transform hover:scale-105 hidden" aria-label="Question suivante">
+                       Question suivante
+                   </button>
+               </div>
+           </div>
+
+           <!-- Résumé de la leçon -->
+           <div id="summary-view" class="view bg-white text-gray-800 rounded-xl p-6 shadow-lg warm-card" role="region" aria-label="Résultats">
+               <div class="flex justify-between items-center mb-4">
+                   <button class="back-btn bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold py-2 px-4 rounded-lg shadow-md transition duration-300 ease-in-out" aria-label="Retour">
+                       <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                           <path fill-rule="evenodd" d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z" clip-rule="evenodd" />
+                       </svg>
+                   </button>
+                   <h2 class="text-xl font-bold">Résultats</h2>
+                   <div class="w-10"></div> <!-- Spacer pour équilibrer -->
+               </div>
+               
+               <div class="flex items-center mb-6">
+                   <img id="summary-character-img" src="https://img.freepik.com/free-vector/hand-drawn-flat-design-african-american-teacher_23-2149380401.jpg" alt="Personnage" class="character-image mr-4">
+                   <div class="character-dialog flex-1" aria-live="polite">
+                       <p id="summary-character-dialog">Tu as terminé cette leçon! Impressionnant! Bravo pour ton travail et ta persévérance!</p>
+                   </div>
+               </div>
+               
+               <div class="bg-purple-100 p-6 rounded-lg mb-6 text-center" role="region" aria-label="Score final">
+                   <h3 id="score-display" class="text-2xl font-bold text-purple-800 mb-2">Score: 0/0</h3>
+                   <p id="grade-display" class="text-purple-800 text-lg">Note: 0/20</p>
+                   <div class="mt-4 flex justify-center">
+                       <div class="bg-yellow-500 rounded-full h-16 w-16 flex items-center justify-center" aria-hidden="true">
+                           <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" />
+                           </svg>
+                       </div>
+                   </div>
+               </div>
+               
+               <div class="bg-gray-100 p-4 rounded-lg mb-6" role="region" aria-label="Récapitulatif des questions">
+                   <h3 class="text-lg font-bold mb-4">Récapitulatif des questions:</h3>
+                   
+                   <div id="questions-recap" class="space-y-4" aria-live="polite">
+                       <!-- Le récapitulatif des questions sera généré dynamiquement ici -->
+                   </div>
+               </div>
+               
+               <div class="flex justify-center space-x-4">
+                   <button id="replay-btn" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-lg shadow-md transition duration-300 ease-in-out" aria-label="Rejouer cette leçon">
+                       Rejouer
+                   </button>
+                   <button id="next-lesson-btn" class="bg-purple-600 hover:bg-purple-700 text-white font-bold py-3 px-6 rounded-lg shadow-md transition duration-300 ease-in-out" aria-label="Passer à la leçon suivante">
+                       Leçon suivante
+                   </button>
+               </div>
+           </div>
+
+           <!-- Paramètres -->
+           <div id="settings-view" class="view bg-white text-gray-800 rounded-xl p-6 shadow-lg warm-card" role="region" aria-label="Paramètres">
+               <div class="flex justify-between items-center mb-6">
+                   <button class="back-btn bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold py-2 px-4 rounded-lg shadow-md transition duration-300 ease-in-out" aria-label="Retour">
+                       <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                           <path fill-rule="evenodd" d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z" clip-rule="evenodd" />
+                       </svg>
+                   </button>
+                   <h2 class="text-2xl font-bold">Paramètres</h2>
+                   <div class="w-10"></div> <!-- Spacer pour équilibrer -->
+               </div>
+               
+               <div class="space-y-6">
+                   <div class="flex items-center justify-between">
+                       <span class="text-lg font-medium">Musique</span>
+                       <label class="relative inline-flex items-center cursor-pointer">
+                           <input id="music-toggle" type="checkbox" value="" class="sr-only peer" checked aria-label="Activer ou désactiver la musique">
+                           <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
+                       </label>
+                   </div>
+                   
+                   <div class="flex items-center justify-between">
+                       <span class="text-lg font-medium">Effets sonores</span>
+                       <label class="relative inline-flex items-center cursor-pointer">
+                           <input id="sound-effects-toggle" type="checkbox" value="" class="sr-only peer" checked aria-label="Activer ou désactiver les effets sonores">
+                           <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
+                       </label>
+                   </div>
+                   
+                   <div class="flex items-center justify-between">
+                       <span class="text-lg font-medium">Mode sombre</span>
+                       <label class="relative inline-flex items-center cursor-pointer">
+                           <input id="dark-mode-toggle" type="checkbox" value="" class="sr-only peer" checked aria-label="Activer ou désactiver le mode sombre">
+                           <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
+                       </label>
+                   </div>
+                   
+                   <div class="flex items-center justify-between">
+                       <span class="text-lg font-medium">Texte plus grand</span>
+                       <label class="relative inline-flex items-center cursor-pointer">
+                           <input id="large-text-toggle" type="checkbox" value="" class="sr-only peer" aria-label="Activer ou désactiver le texte plus grand">
+                           <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
+                       </label>
+                   </div>
+                   
+                   <div class="flex items-center justify-between">
+                       <span class="text-lg font-medium">Contraste élevé</span>
+                       <label class="relative inline-flex items-center cursor-pointer">
+                           <input id="high-contrast-toggle" type="checkbox" value="" class="sr-only peer" aria-label="Activer ou désactiver le contraste élevé">
+                           <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
+                       </label>
+                   </div>
+                   
+                   <div>
+                       <span class="text-lg font-medium">Musique d'ambiance</span>
+                       <div class="mt-2 space-y-2">
+                           <div class="flex items-center">
+                               <input id="music-study" name="music-type" type="radio" value="study" class="h-4 w-4 border-gray-300 text-indigo-600 focus:ring-indigo-500" checked aria-label="Musique d'étude">
+                               <label for="music-study" class="ml-3 block text-sm font-medium text-gray-700">Étude</label>
+                           </div>
+                           <div class="flex items-center">
+                               <input id="music-relax" name="music-type" type="radio" value="relax" class="h-4 w-4 border-gray-300 text-indigo-600 focus:ring-indigo-500" aria-label="Musique de relaxation">
+                               <label for="music-relax" class="ml-3 block text-sm font-medium text-gray-700">Relaxation</label>
+                           </div>
+                           <div class="flex items-center">
+                               <input id="music-focus" name="music-type" type="radio" value="focus" class="h-4 w-4 border-gray-300 text-indigo-600 focus:ring-indigo-500" aria-label="Musique de concentration">
+                               <label for="music-focus" class="ml-3 block text-sm font-medium text-gray-700">Concentration</label>
+                           </div>
+                       </div>
+                   </div>
+                   
+                   <div class="pt-4 border-t border-gray-200">
+                       <button id="save-settings-btn" class="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-lg shadow-md transition duration-300 ease-in-out mr-4" aria-label="Sauvegarder les paramètres">
+                           Sauvegarder les paramètres
+                       </button>
+                       <button id="reset-profile-btn" class="bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-lg shadow-md transition duration-300 ease-in-out" aria-label="Réinitialiser mon profil">
+                           Réinitialiser mon profil
+                       </button>
+                   </div>
+               </div>
+           </div>
+       </main>
+   </div>
+
+   <!-- Overlay pour les notifications -->
+   <div id="notification" class="fixed top-4 right-4 bg-green-500 text-white p-4 rounded-lg shadow-lg z-50 transform translate-x-full transition-transform duration-300" role="alert" aria-live="assertive"></div>
+
+   <!-- Audio pour la musique de fond et les effets sonores -->
+   <audio id="background-music" loop></audio>
+   
+   <audio id="correct-sound">
+       <source src="https://assets.mixkit.co/sfx/preview/mixkit-correct-answer-tone-2870.mp3" type="audio/mpeg">
+       Votre navigateur ne supporte pas l'élément audio.
+   </audio>
+   
+   <audio id="incorrect-sound">
+       <source src="https://assets.mixkit.co/sfx/preview/mixkit-wrong-answer-fail-notification-946.mp3" type="audio/mpeg">
+       Votre navigateur ne supporte pas l'élément audio.
+   </audio>
+   
+   <audio id="level-up-sound">
+       <source src="https://assets.mixkit.co/sfx/preview/mixkit-winning-chimes-2015.mp3" type="audio/mpeg">
+       Votre navigateur ne supporte pas l'élément audio.
+   </audio>
+   <!-- Conteneur pour les animations d'emojis -->
+   <div id="emoji-container" class="emoji-container"></div>
+   <script src="Untitled-1.js"></script>
+</body>
+</html>
