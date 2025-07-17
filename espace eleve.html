@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Espace Élève</title>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet"/>
+  <style>
+    body { background: linear-gradient(120deg, #a7bfe8 0%, #fbc2eb 100%); min-height: 100vh; }
+    .glass { background: rgba(255,255,255,0.75); backdrop-filter: blur(10px); box-shadow: 0 6px 32px 0 rgba(113,91,245,0.13);}
+    .primary-btn { background: linear-gradient(90deg, #7f53ac 0%, #647dee 100%); color: #fff; font-weight: bold; }
+    .primary-btn:hover { filter: brightness(1.08); }
+  </style>
+</head>
+<body>
+  <div class="container mx-auto py-10 max-w-2xl">
+    <div class="glass rounded-3xl p-8">
+      <h1 class="text-3xl font-extrabold text-center mb-8 text-indigo-800" style="font-family: 'Segoe UI',cursive;">Espace Élève</h1>
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
+        <select id="eleve-classe" class="border p-3 rounded-xl focus:ring-2 focus:ring-indigo-400">
+          <option value="">Classe</option>
+          <option value="Première A">Première A</option>
+          <option value="Première C">Première C</option>
+          <option value="Première D">Première D</option>
+        </select>
+        <select id="eleve-matiere" class="border p-3 rounded-xl focus:ring-2 focus:ring-indigo-400">
+          <option value="">Matière</option>
+          <option value="Mathématiques">Mathématiques</option>
+          <option value="Physique-Chimie">Physique-Chimie</option>
+          <option value="SVT">SVT</option>
+          <option value="Français">Français</option>
+          <option value="Histoire-Géographie">Histoire-Géographie</option>
+          <option value="Philosophie">Philosophie</option>
+        </select>
+      </div>
+      <form id="form-fichier-eleve" class="mb-8">
+        <label class="font-semibold mb-1 block text-indigo-700">Envoyer un document (PDF) à un professeur :</label>
+        <div class="flex gap-2 items-center">
+          <input type="file" id="pdf-file-eleve" accept="application/pdf" class="border p-2 rounded-lg flex-grow">
+          <button type="button" id="upload-pdf-eleve" class="primary-btn rounded-lg px-4 py-2 ml-2">Envoyer</button>
+        </div>
+      </form>
+      <form id="ask-form" class="mb-8">
+        <label class="font-semibold mb-1 block text-indigo-700" for="q-eleve">Poser une question à un professeur :</label>
+        <div class="flex gap-2">
+          <textarea id="q-eleve" class="border p-2 rounded-lg flex-grow" rows="2" placeholder="Exemple : Je ne comprends pas la dérivée d'une fonction..."></textarea>
+          <button type="submit" class="primary-btn rounded-lg px-4 py-2">Envoyer</button>
+        </div>
+      </form>
+      <div class="mb-8">
+        <h3 class="font-bold text-lg mb-2 text-indigo-700">Réponses des professeurs</h3>
+        <ul id="liste-questions-eleve" class="space-y-4"></ul>
+      </div>
+      <div>
+        <h3 class="font-bold text-lg mb-2 text-indigo-700">Documents déposés par les professeurs</h3>
+        <ul id="liste-pdf-prof" class="list-disc pl-6"></ul>
+      </div>
+    </div>
+  </div>
+  <script>
+function getProfPDFs() { return JSON.parse(localStorage.getItem('prof-pdfs') || '[]'); }
+function getQuestions() { return JSON.parse(localStorage.getItem('questions-eleves') || '[]'); }
+function setQuestions(list) { localStorage.setItem('questions-eleves', JSON.stringify(list)); }
+function getElevePDFs() { return JSON.parse(localStorage.getItem('eleve-pdfs') || '[]'); }
+function setElevePDFs(list) { localStorage.setItem('eleve-pdfs', JSON.stringify(list)); }
+
+function getClasseMatiere() {
+  return {
+    classe: document.getElementById('eleve-classe').value,
+    matiere: document.getElementById('eleve-matiere').value
+  }
+}
+
+document.getElementById('upload-pdf-eleve').onclick = function() {
+  const {classe, matiere} = getClasseMatiere();
+  if (!classe || !matiere) return alert("Choisissez d'abord la classe et la matière.");
+  const fileInput = document.getElementById('pdf-file-eleve');
+  if (!fileInput.files[0]) return alert('Sélectionnez un fichier PDF.');
+  const file = fileInput.files[0];
+  if (file.type !== 'application/pdf') return alert('Format PDF uniquement !');
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    const list = getElevePDFs();
+    list.push({name: file.name, data: e.target.result, matiere, classe});
+    setElevePDFs(list);
+    fileInput.value = '';
+    alert("Document envoyé aux professeurs !");
+  };
+  reader.readAsDataURL(file);
+};
+
+document.getElementById('ask-form').onsubmit = function(e) {
+  e.preventDefault();
+  const {classe, matiere} = getClasseMatiere();
+  if (!classe || !matiere) return alert("Choisissez d'abord la classe et la matière.");
+  const q = document.getElementById('q-eleve').value.trim();
+  if(!q) return;
+  const list = getQuestions();
+  list.push({ question: q, reponse: "", classe, matiere });
+  setQuestions(list);
+  document.getElementById('q-eleve').value = '';
+  renderQuestionsEleve();
+};
+
+function renderProfPDFsEleve() {
+  const ul = document.getElementById('liste-pdf-prof');
+  const {classe, matiere} = getClasseMatiere();
+  if (!classe || !matiere) return ul.innerHTML = "";
+  const list = getProfPDFs();
+  ul.innerHTML = '';
+  list.filter(pdf => pdf.classe === classe && pdf.matiere === matiere)
+    .forEach(pdf => {
+      const li = document.createElement('li');
+      li.innerHTML = `${pdf.name} <a href="${pdf.data}" download="${pdf.name}" class="text-indigo-600 underline ml-2">Télécharger</a>`;
+      ul.appendChild(li);
+    });
+}
+
+function renderQuestionsEleve() {
+  const ul = document.getElementById('liste-questions-eleve');
+  const {classe, matiere} = getClasseMatiere();
+  if (!classe || !matiere) return ul.innerHTML = "";
+  ul.innerHTML = '';
+  getQuestions().filter(q => q.classe === classe && q.matiere === matiere)
+    .forEach((item) => {
+      const li = document.createElement('li');
+      li.className = "bg-indigo-50 rounded-xl p-4";
+      li.innerHTML = `<span class="font-semibold text-indigo-700">Question :</span> ${item.question}<br>
+        <span class="font-semibold text-green-600">Réponse :</span> ${item.reponse ? item.reponse : `<span class="italic text-gray-400">En attente de réponse d'un professeur…</span>`}`;
+      ul.appendChild(li);
+    });
+}
+document.getElementById('eleve-classe').onchange = document.getElementById('eleve-matiere').onchange = function() {
+  renderQuestionsEleve(); renderProfPDFsEleve();
+};
+renderQuestionsEleve();
+renderProfPDFsEleve();
+  </script>
+</body>
+</html>

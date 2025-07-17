@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Espace Professeur</title>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet"/>
+  <style>
+    body { background: linear-gradient(120deg, #fbc2eb 0%, #a7bfe8 100%); min-height: 100vh; }
+    .glass { background: rgba(255,255,255,0.75); backdrop-filter: blur(10px); box-shadow: 0 6px 32px 0 rgba(113,91,245,0.15);}
+    .primary-btn { background: linear-gradient(90deg, #fc5c7d 0%, #6a82fb 100%); color: #fff; font-weight: bold; }
+    .primary-btn:hover { filter: brightness(1.08); }
+  </style>
+</head>
+<body>
+  <div class="container mx-auto py-10 max-w-2xl">
+    <div class="glass rounded-3xl p-8">
+      <h1 class="text-3xl font-extrabold text-center mb-8 text-pink-700" style="font-family: 'Segoe UI',cursive;">Espace Professeur</h1>
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
+        <select id="prof-classe" class="border p-3 rounded-xl focus:ring-2 focus:ring-pink-400">
+          <option value="">Classe</option>
+          <option value="Première A">Première A</option>
+          <option value="Première C">Première C</option>
+          <option value="Première D">Première D</option>
+        </select>
+        <select id="prof-matiere" class="border p-3 rounded-xl focus:ring-2 focus:ring-pink-400">
+          <option value="">Matière enseignée</option>
+          <option value="Mathématiques">Mathématiques</option>
+          <option value="Physique-Chimie">Physique-Chimie</option>
+          <option value="SVT">SVT</option>
+          <option value="Français">Français</option>
+          <option value="Histoire-Géographie">Histoire-Géographie</option>
+          <option value="Philosophie">Philosophie</option>
+        </select>
+      </div>
+      <form id="form-fichier-prof" class="mb-8">
+        <label class="font-semibold mb-1 block text-pink-700">Envoyer un PDF à la classe :</label>
+        <div class="flex gap-2 items-center">
+          <input type="file" id="pdf-file-prof" accept="application/pdf" class="border p-2 rounded-lg flex-grow">
+          <button type="button" id="upload-pdf-prof" class="primary-btn rounded-lg px-4 py-2 ml-2">Envoyer</button>
+        </div>
+      </form>
+      <div class="mb-8">
+        <h3 class="font-bold text-lg mb-2 text-pink-700">Questions posées par les élèves</h3>
+        <ul id="liste-questions-prof" class="space-y-4"></ul>
+      </div>
+      <div>
+        <h3 class="font-bold text-lg mb-2 text-pink-700">Documents déposés par les élèves</h3>
+        <ul id="liste-pdf-eleve" class="list-disc pl-6"></ul>
+      </div>
+    </div>
+  </div>
+  <script>
+function getProfPDFs() { return JSON.parse(localStorage.getItem('prof-pdfs') || '[]'); }
+function setProfPDFs(list) { localStorage.setItem('prof-pdfs', JSON.stringify(list)); }
+function getQuestions() { return JSON.parse(localStorage.getItem('questions-eleves') || '[]'); }
+function setQuestions(list) { localStorage.setItem('questions-eleves', JSON.stringify(list)); }
+function getElevePDFs() { return JSON.parse(localStorage.getItem('eleve-pdfs') || '[]'); }
+
+function getClasseMatiereProf() {
+  return {
+    classe: document.getElementById('prof-classe').value,
+    matiere: document.getElementById('prof-matiere').value
+  }
+}
+
+document.getElementById('upload-pdf-prof').onclick = function() {
+  const {classe, matiere} = getClasseMatiereProf();
+  if (!classe || !matiere) return alert("Choisissez d'abord la classe et la matière.");
+  const fileInput = document.getElementById('pdf-file-prof');
+  if (!fileInput.files[0]) return alert('Sélectionnez un fichier PDF.');
+  const file = fileInput.files[0];
+  if (file.type !== 'application/pdf') return alert('Format PDF uniquement !');
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    const list = getProfPDFs();
+    list.push({name: file.name, data: e.target.result, matiere, classe});
+    setProfPDFs(list);
+    fileInput.value = '';
+    alert("Document envoyé à tous les élèves !");
+  };
+  reader.readAsDataURL(file);
+};
+
+function renderQuestionsProf() {
+  const ul = document.getElementById('liste-questions-prof');
+  const {classe, matiere} = getClasseMatiereProf();
+  if (!classe || !matiere) return ul.innerHTML = "";
+  ul.innerHTML = '';
+  getQuestions().filter(q => q.classe === classe && q.matiere === matiere)
+    .forEach((item, i) => {
+      const li = document.createElement('li');
+      li.className = "bg-pink-50 rounded-xl p-4";
+      let reponseHtml = '';
+      if (item.reponse) {
+        reponseHtml = `<span class="font-semibold text-green-700">Réponse :</span> ${item.reponse}`;
+      } else {
+        reponseHtml = `
+          <form onsubmit="return saveReponse(${i}, this)">
+            <textarea name="reponse" class="border p-2 rounded w-full mb-2" rows="2" placeholder="Rédiger la réponse ou l'explication…"></textarea>
+            <button type="submit" class="primary-btn rounded-lg px-4 py-2">Répondre</button>
+          </form>
+        `;
+      }
+      li.innerHTML = `<span class="font-semibold text-pink-700">Question :</span> ${item.question}<br>${reponseHtml}`;
+      ul.appendChild(li);
+    });
+}
+window.saveReponse = function(idx, form) {
+  const reponse = form.reponse.value.trim();
+  if (!reponse) return false;
+  const list = getQuestions();
+  list[idx].reponse = reponse;
+  setQuestions(list);
+  renderQuestionsProf();
+  return false;
+};
+
+function renderElevePDFsProf() {
+  const ul = document.getElementById('liste-pdf-eleve');
+  const {classe, matiere} = getClasseMatiereProf();
+  if (!classe || !matiere) return ul.innerHTML = "";
+  const list = getElevePDFs();
+  ul.innerHTML = '';
+  list.filter(pdf => pdf.classe === classe && pdf.matiere === matiere)
+    .forEach(pdf => {
+      const li = document.createElement('li');
+      li.innerHTML = `${pdf.name} <a href="${pdf.data}" download="${pdf.name}" class="text-pink-700 underline ml-2">Télécharger</a>`;
+      ul.appendChild(li);
+    });
+}
+document.getElementById('prof-classe').onchange = document.getElementById('prof-matiere').onchange = function() {
+  renderQuestionsProf(); renderElevePDFsProf();
+};
+renderQuestionsProf();
+renderElevePDFsProf();
+  </script>
+</body>
+</html>
