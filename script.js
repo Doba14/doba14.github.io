@@ -1,5 +1,6 @@
 // Configuration API
 const API_BASE_URL = 'https://bd05845e-0f73-4439-8efa-2c90a4aafda0.preview.emergentagent.com/api';
+
 // Variables globales
 let currentUser = null;
 let authToken = null;
